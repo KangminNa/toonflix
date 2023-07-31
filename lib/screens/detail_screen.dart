@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-class DetailScreen extends StatelessWidget {
+import '../model/webtoon_detail_model.dart';
+import '../model/webtoon_episode_model.dart';
+import '../services/api_service.dart';
+
+class DetailScreen extends StatefulWidget {
   final String title, thumb, id;
 
   const DetailScreen({
@@ -11,6 +15,22 @@ class DetailScreen extends StatelessWidget {
   });
 
   @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  late Future<WebtoonDetailModel> webtoon;
+  late Future<List<WebtoonEpisodeModel>> episodes;
+
+  @override
+  void initState() {
+    super.initState();
+    webtoon = ApiService.getToonById(widget.id);
+    episodes = ApiService.getLatestEpisodesById(widget.id);
+    //사용자가 클릭한 값의 id값을 넘기기 위해 작성한 코드
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -19,7 +39,7 @@ class DetailScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
         title: Text(
-          title,
+          widget.title,
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w400,
@@ -36,8 +56,8 @@ class DetailScreen extends StatelessWidget {
             children: [
               Hero(
                 tag: {
-                  id,
-                  title,
+                  widget.id,
+                  widget.title,
                 },
                 child: Container(
                   width: 250,
@@ -52,7 +72,7 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Image.network(thumb),
+                  child: Image.network(widget.thumb),
                 ),
               ),
             ],
